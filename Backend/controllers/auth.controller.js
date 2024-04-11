@@ -45,10 +45,33 @@ export const register = async (req, res) => {
     }
 }
 export const login = async (req, res) => {
-    res.send("login user here");
+    const {pseudo,password} =  req.body
+    try {
+        const user = await User.findOne({pseudo})
+        const isPasswordCorrect = await bcryptjs.compare(password, user?.password || "")
+        if(!user || !isPasswordCorrect){
+            res.status(400).json({error: "login ou mot de passe incorrect"})
+        }
+        generateTokenAndSetCookie(user._id, res)
+        return res.status(200).json({
+            _id:user._id,
+            nomComplet:user.nomComplet,
+            pseudo:user.pseudo,
+            photo:user.photo
+        })
+
+    } catch (error) {
+        res.status(500).json({error: error.message})
+    }
+    
 }
 export const logout = async(req, res) => {
-    res.send("login user here");
+    try {
+        res.cookie("jwt", "",{maxAge:0})
+        res.status(200).json({message: "Deconnexion Reussi"})
+    } catch (error) {
+        res.status(500).json({error: error.message})
+    }
 }
 
 

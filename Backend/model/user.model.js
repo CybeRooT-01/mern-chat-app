@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
         default:""
     },
 
-})
+},{timestamps:true})
 
 const User = mongoose.model("User", userSchema) //le nom de la "table" sera user (sa depend de notr eprojet en realité)
 
